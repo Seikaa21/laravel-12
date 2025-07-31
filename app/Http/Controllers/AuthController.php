@@ -9,26 +9,30 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function loginForm() {
+    public function loginForm()
+    {
         return view('auth.login');
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/dashboard');
+            return redirect()->route('home'); // ⬅️ DIUBAH: langsung ke halaman welcome.blade.php
         }
 
         return back()->withErrors(['email' => 'Email atau password salah.']);
     }
 
-    public function registerForm() {
+    public function registerForm()
+    {
         return view('auth.register');
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -44,7 +48,8 @@ class AuthController extends Controller
         return redirect('/login')->with('success', 'Berhasil mendaftar. Silakan login.');
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
         return view('dashboard');
     }
 
@@ -64,10 +69,12 @@ class AuthController extends Controller
         return redirect('/dashboard')->with('success', 'Profil berhasil diperbarui.');
     }
 
-    public function logout(Request $request) {
+public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+
+        // 🔁 Arahkan kembali ke halaman utama setelah logout
+        return redirect('/');
     }
 }
