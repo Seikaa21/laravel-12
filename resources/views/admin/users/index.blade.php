@@ -91,13 +91,6 @@
         {{-- Navbar --}}
         <nav class="mb-6 bg-white/70 backdrop-blur-lg shadow rounded-xl p-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-purple-800">⚙️ Manajemen User</h1>
-            <div class="space-x-2">
-                <a href="{{ route('welcome') }}" class="px-3 py-1 bg-blue-500 text-white rounded-lg shadow">Home</a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded-lg shadow">Logout</button>
-                </form>
-            </div>
         </nav>
 
         {{-- Manajemen User --}}
