@@ -3,9 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KontenController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\UserController;
 
 // ==================== HALAMAN UTAMA ====================
-Route::get('/', [KontenController::class, 'index'])->name('home');
+Route::get('/', [KontenController::class, 'landing'])->name('welcome'); 
+// tampilkan welcome.blade.php (pake search & pagination)
 
 // ==================== ROUTE UNTUK TAMU (BELUM LOGIN) ====================
 Route::middleware('guest')->group(function () {
@@ -20,20 +23,50 @@ Route::middleware('guest')->group(function () {
 
 // ==================== ROUTE UNTUK USER YANG SUDAH LOGIN ====================
 Route::middleware('auth')->group(function () {
-    // Dashboard dan update profil
+    // Dashboard & update profil
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('/dashboard/update', [AuthController::class, 'updateProfile'])->name('dashboard.update');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ========== CRUD Kategori ==========
-    Route::post('/kategori', [KontenController::class, 'storeKategori'])->name('kategori.store');
-    Route::put('/kategori/{id}', [KontenController::class, 'updateKategori'])->name('kategori.update');
-    Route::delete('/kategori/{id}', [KontenController::class, 'destroyKategori'])->name('kategori.destroy');
+    // ========== CRUD Konten (izin per halaman) ==========
+    Route::prefix('konten')->name('konten.')->group(function () {
+        Route::get('/', [KontenController::class, 'index'])
+            ->name('index')
+            ->middleware('permission:can_access_konten');   // ✅ cek izin
+        
+        Route::post('/', [KontenController::class, 'store'])
+            ->name('store')
+            ->middleware('permission:can_access_konten');
 
-    // ========== CRUD Konten ==========
-    Route::post('/konten', [KontenController::class, 'storeKonten'])->name('konten.store');
-    Route::put('/konten/{id}', [KontenController::class, 'updateKonten'])->name('konten.update');
-    Route::delete('/konten/{id}', [KontenController::class, 'destroyKonten'])->name('konten.destroy');
+        Route::get('/{id}', [KontenController::class, 'show'])
+            ->name('show')
+            ->middleware('permission:can_access_konten');
+
+        Route::put('/{id}', [KontenController::class, 'update'])
+            ->name('update')
+            ->middleware('permission:can_access_konten');
+
+        Route::delete('/{id}', [KontenController::class, 'destroy'])
+            ->name('destroy')
+            ->middleware('permission:can_access_konten');
+    });
 });
+
+// ==================== ROUTE UNTUK ADMIN (LOGIN + ADMIN) ====================
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    // CRUD Kategori
+    Route::prefix('kategori')->name('kategori.')->group(function () {
+        Route::get('/', [KategoriController::class, 'index'])->name('index');
+        Route::post('/', [KategoriController::class, 'store'])->name('store');
+        Route::put('/{kategori}', [KategoriController::class, 'update'])->name('update');
+        Route::delete('/{kategori}', [KategoriController::class, 'destroy'])->name('destroy');
+    });
+
+    // Manajemen User & Izin
+    Route::get('/users', [AuthController::class, 'listUsers'])->name('admin.users.index');
+    Route::patch('/users/{user}/toggle-permission', [AuthController::class, 'togglePermission'])
+        ->name('admin.users.togglePermission');
+});
+

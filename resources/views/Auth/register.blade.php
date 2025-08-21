@@ -22,6 +22,15 @@
                    class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500">
             <input type="password" name="password_confirmation" placeholder="Konfirmasi Password" required
                    class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500">
+
+            <!-- ✅ Pilihan Role -->
+            <select name="role" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="">-- Pilih Role --</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+
             <button type="submit"
                     class="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition-colors">
                 Daftar

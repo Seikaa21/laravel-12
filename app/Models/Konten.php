@@ -9,7 +9,8 @@ class Konten extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['judul', 'isi', 'kategori_id'];
+    // tambahkan 'gambar'
+    protected $fillable = ['judul', 'isi', 'kategori_id', 'gambar'];
 
     public function kategori()
     {
